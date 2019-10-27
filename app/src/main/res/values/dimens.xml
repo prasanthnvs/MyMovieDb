@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="movie_image_height">250dp</dimen>
+    <dimen name="movie_title_text_size">19sp</dimen>
+    <dimen name="movie_overview_text_size">16sp</dimen>
+    <dimen name="movie_runtime_text_size">16sp</dimen>
+    <dimen name="movie_homepage_link_text_size">16sp</dimen>
+    <dimen name="movie_popularity_text_size">16sp</dimen>
+    <dimen name="movie_release_year">16sp</dimen>
+    <dimen name="recycler_loading_view_height">80dp</dimen>
+</resources>

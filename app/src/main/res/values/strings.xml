@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LastMile</string>
+    <string name="action_settings">Settings</string>
+    <string name="ReleaseYear">ReleaseYear</string>
+</resources>
