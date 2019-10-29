@@ -157,3 +157,17 @@ public class MovieDetailsActivity extends BaseActivity {
         mScrollView.setVisibility(View.VISIBLE);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
