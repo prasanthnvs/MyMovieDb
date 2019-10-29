@@ -44,11 +44,6 @@ dependencies {
     // Retrofit gson converter
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
-    implementation 'com.squareup.okhttp3:okhttp:3.8.0'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.1.0'
-    implementation 'com.fasterxml.jackson:jackson-parent:2.7'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 
