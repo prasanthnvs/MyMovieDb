@@ -10,6 +10,7 @@ import com.prasanth.lastmile.models.MovieItem;
 import com.prasanth.lastmile.rest.responses.GenreResponse;
 import com.prasanth.lastmile.rest.responses.MovieResponse;
 import com.prasanth.lastmile.rest.responses.MoviesResponse;
+import com.prasanth.lastmile.utils.AppExecutors;
 import com.prasanth.lastmile.utils.GenreMap;
 import com.prasanth.lastmile.utils.MovieDbConfig;
 
@@ -17,9 +18,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static com.prasanth.lastmile.utils.Constants.NETWORK_TIMEOUT;
 
 public class MovieApiClient {
 
@@ -33,13 +38,6 @@ public class MovieApiClient {
     private RetrievePopularMoviesRunnable mRetrievePopularMoviesRunnable;
     private RetrieveGenresRunnable mRetrieveGenresRunnable;
     private MutableLiveData<Boolean> mMovieRequestTimeout = new MutableLiveData<>();
-
-    private class DirectExecutor implements Executor {
-
-        public void execute(Runnable r) {
-            new Thread(r).start();
-        }
-    }
 
     public static MovieApiClient getInstance(){
         if(instance == null){
@@ -76,8 +74,16 @@ public class MovieApiClient {
         }
         mRetrieveGenresRunnable = new RetrieveGenresRunnable();
 
-        DirectExecutor executor = new DirectExecutor();
-        executor.execute(mRetrieveGenresRunnable);
+        final Future handler = AppExecutors.getInstance().networkIO().submit(mRetrieveGenresRunnable);
+
+        AppExecutors.getInstance().networkIO().schedule(new Runnable() {
+            @Override
+            public void run() {
+                // let the user know its timed out
+                Log.d(TAG,"TIME OUT Cancelling the Genres Task");
+                handler.cancel(true);
+            }
+        }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     public void searchPopularMovies(int pageNumber){
@@ -86,8 +92,16 @@ public class MovieApiClient {
         }
         mRetrievePopularMoviesRunnable = new RetrievePopularMoviesRunnable(pageNumber);
 
-        DirectExecutor executor = new DirectExecutor();
-        executor.execute(mRetrievePopularMoviesRunnable);
+        final Future handler = AppExecutors.getInstance().networkIO().submit(mRetrievePopularMoviesRunnable);
+
+        AppExecutors.getInstance().networkIO().schedule(new Runnable() {
+            @Override
+            public void run() {
+                // let the user know its timed out
+                Log.d(TAG,"TIME OUT Cancelling the Popular Movies Task");
+                handler.cancel(true);
+            }
+        }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     public void searchMovieById(String movieId){
@@ -97,8 +111,16 @@ public class MovieApiClient {
         }
         mRetrieveMovieDetailsRunnable = new RetrieveMovieDetailsRunnable(movieId);
 
-        DirectExecutor executor = new DirectExecutor();
-        executor.execute(mRetrieveMovieDetailsRunnable);
+        final Future handler = AppExecutors.getInstance().networkIO().submit(mRetrieveMovieDetailsRunnable);
+
+        AppExecutors.getInstance().networkIO().schedule(new Runnable() {
+            @Override
+            public void run() {
+                // let the user know its timed out
+                Log.d(TAG,"TIME OUT Cancelling the MovieDetails Task");
+                handler.cancel(true);
+            }
+        }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     private class RetrievePopularMoviesRunnable implements Runnable{
