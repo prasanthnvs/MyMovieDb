@@ -1,72 +1,98 @@
 package com.prasanth.lastmile.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.prasanth.lastmile.room.Converters;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "movies")
 public class MovieItem {
 
     @SerializedName("poster_path")
     @Expose
+    @ColumnInfo(name = "poster_path")
     private String posterPath;
 
     @SerializedName("adult")
     @Expose
+    @ColumnInfo(name = "adult")
     private boolean adult;
 
     @SerializedName("overview")
     @Expose
+    @ColumnInfo(name = "overview")
     private String overview;
 
     @SerializedName("release_date")
     @Expose
+    @ColumnInfo(name = "releaseDate")
     private String releaseDate;
 
     @SerializedName("genre_ids")
     @Expose
+    @ColumnInfo(name = "genre_ids")
+    @TypeConverters(Converters.class)
     private List<Integer> genreIds = new ArrayList<Integer>();
 
     @SerializedName("id")
     @Expose
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
     private Integer id;
 
     @SerializedName("original_title")
     @Expose
+    @ColumnInfo(name = "original_title")
     private String originalTitle;
 
     @SerializedName("original_language")
     @Expose
+    @ColumnInfo(name = "original_language")
     private String originalLanguage;
 
     @SerializedName("title")
     @Expose
+    @ColumnInfo(name = "title")
     private String title;
 
     @SerializedName("backdrop_path")
     @Expose
+    @ColumnInfo(name = "backdrop_path")
     private String backdropPath;
 
     @SerializedName("popularity")
     @Expose
+    @ColumnInfo(name = "popularity")
     private Double popularity;
 
     @SerializedName("vote_count")
     @Expose
+    @ColumnInfo(name = "vote_count")
     private Integer voteCount;
 
     @SerializedName("video")
     @Expose
+    @ColumnInfo(name = "video")
     private Boolean video;
 
     @SerializedName("vote_average")
     @Expose
+    @ColumnInfo(name = "vote_average")
     private Double voteAverage;
 
     public MovieItem() {
     }
 
+    @Ignore
     public MovieItem(String posterPath, boolean adult, String overview, String releaseDate, List<Integer> genreIds, Integer id,
                      String originalTitle, String originalLanguage, String title, String backdropPath, Double popularity,
                      Integer voteCount, Boolean video, Double voteAverage) {

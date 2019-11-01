@@ -1,22 +1,24 @@
 package com.prasanth.lastmile.viewmodels;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.prasanth.lastmile.models.MovieItem;
 import com.prasanth.lastmile.repositories.MovieRepository;
 
 import java.util.List;
 
-public class MovieListViewModel extends ViewModel {
+public class MovieListViewModel extends AndroidViewModel {
 
     private MovieRepository mMovieRepository;
     private boolean mIsViewingMovies;
-    private boolean mIsPerformingQuery;
 
-    public MovieListViewModel() {
-        mMovieRepository = MovieRepository.getInstance();
-        mIsPerformingQuery = false;
+    public MovieListViewModel(@NonNull Application application) {
+        super(application);
+        mMovieRepository = MovieRepository.getInstance(application);
     }
 
     public LiveData<List<MovieItem>> getMovies(){
@@ -25,13 +27,11 @@ public class MovieListViewModel extends ViewModel {
 
     public void searchMoviesApi(int pageNumber){
         mIsViewingMovies = true;
-        mIsPerformingQuery = true;
         mMovieRepository.searchPopularMovies(pageNumber);
     }
 
     public void searchNextPage(){
-        if(!mIsPerformingQuery
-                && mIsViewingMovies) {
+        if(mIsViewingMovies) {
             mMovieRepository.searchNextPage();
         }
     }
@@ -44,19 +44,7 @@ public class MovieListViewModel extends ViewModel {
         mIsViewingMovies = isViewingMovies;
     }
 
-    public void setIsPerformingQuery(Boolean isPerformingQuery){
-        mIsPerformingQuery = isPerformingQuery;
-    }
-
-    public boolean onBackPressed(){
-        if(mIsPerformingQuery){
-            mMovieRepository.cancelRequest();
-            mIsPerformingQuery = false;
-        }
-        if(mIsViewingMovies){
-            mIsViewingMovies = false;
-            return false;
-        }
-        return true;
+    public LiveData<Boolean> isPopularMoviesQueryExhausted(){
+        return mMovieRepository.isPopularMoviesQueryExhausted();
     }
 }

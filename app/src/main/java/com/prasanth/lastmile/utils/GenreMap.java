@@ -30,6 +30,19 @@ public class GenreMap {
         return genreNames.toString();
     }
 
+    public static String getGenresList(List<String> ids) {
+        StringBuilder genreNames = new StringBuilder();
+        for(String id : ids){
+            genreNames.append(mGenreMap.get(Integer.valueOf(id)));
+            genreNames.append("  ");
+        }
+        return genreNames.toString();
+    }
+
+    public static int getGenreMapSize() {
+        return mGenreMap.size();
+    }
+
     public static void populateGenreMap(List<GenreItem> genres){
         if(genres != null) {
             for (GenreItem genre : genres) {

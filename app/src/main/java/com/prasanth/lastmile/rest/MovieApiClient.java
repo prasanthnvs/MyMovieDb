@@ -6,9 +6,11 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.prasanth.lastmile.models.GenreItem;
+import com.prasanth.lastmile.models.MovieDetails;
 import com.prasanth.lastmile.models.MovieItem;
 import com.prasanth.lastmile.rest.responses.GenreResponse;
-import com.prasanth.lastmile.rest.responses.MovieResponse;
+import com.prasanth.lastmile.rest.responses.MovieDetailsResponse;
 import com.prasanth.lastmile.rest.responses.MoviesResponse;
 import com.prasanth.lastmile.utils.AppExecutors;
 import com.prasanth.lastmile.utils.GenreMap;
@@ -17,7 +19,6 @@ import com.prasanth.lastmile.utils.MovieDbConfig;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -32,30 +33,42 @@ public class MovieApiClient {
 
     private static MovieApiClient instance;
     private MutableLiveData<List<MovieItem>> mPopularMovies;
-    private MutableLiveData<MovieResponse> mMovie;
+    private MutableLiveData<MovieDetails> mMovie;
     private GenreResponse mGenres;
     private RetrieveMovieDetailsRunnable mRetrieveMovieDetailsRunnable;
     private RetrievePopularMoviesRunnable mRetrievePopularMoviesRunnable;
     private RetrieveGenresRunnable mRetrieveGenresRunnable;
     private MutableLiveData<Boolean> mMovieRequestTimeout = new MutableLiveData<>();
+    private NetworkListener mListener;
 
-    public static MovieApiClient getInstance(){
+    public interface NetworkListener{
+        public void onPopularMoviesNetworkError();
+        public void onMovieDetailsNetworkError();
+        public void onGenresNetworkError();
+        public void onPopularMoviesResponse(List<MovieItem> movies);
+        public void onMovieDetailsResponse(MovieDetails movieResponse);
+        public void onGenresResponse(List<GenreItem> genres);
+    }
+
+    public static MovieApiClient getInstance(NetworkListener listener){
         if(instance == null){
-            instance = new MovieApiClient();
+            instance = new MovieApiClient(listener);
         }
         return instance;
     }
 
-    private MovieApiClient(){
+    private MovieApiClient(NetworkListener listener){
+        mListener = listener;
         mPopularMovies = new MutableLiveData<>();
         mMovie = new MutableLiveData<>();
+        mGenres = new GenreResponse();
     }
 
     public LiveData<List<MovieItem>> getMovies(){
         return mPopularMovies;
     }
 
-    public LiveData<MovieResponse> getMovie(){
+    public LiveData<MovieDetails> getMovie(){
         return mMovie;
     }
 
@@ -69,6 +82,7 @@ public class MovieApiClient {
 
 
     public void searchGenresList() {
+        Log.d(TAG, "searchGenresList()");
         if (mRetrieveGenresRunnable != null) {
             mRetrieveGenresRunnable = null;
         }
@@ -79,7 +93,6 @@ public class MovieApiClient {
         AppExecutors.getInstance().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
-                // let the user know its timed out
                 Log.d(TAG,"TIME OUT Cancelling the Genres Task");
                 handler.cancel(true);
             }
@@ -87,6 +100,7 @@ public class MovieApiClient {
     }
 
     public void searchPopularMovies(int pageNumber){
+        Log.d(TAG, "searchGenresList() pageNumber: " + pageNumber);
         if(mRetrievePopularMoviesRunnable != null){
             mRetrievePopularMoviesRunnable = null;
         }
@@ -97,7 +111,6 @@ public class MovieApiClient {
         AppExecutors.getInstance().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
-                // let the user know its timed out
                 Log.d(TAG,"TIME OUT Cancelling the Popular Movies Task");
                 handler.cancel(true);
             }
@@ -113,11 +126,12 @@ public class MovieApiClient {
 
         final Future handler = AppExecutors.getInstance().networkIO().submit(mRetrieveMovieDetailsRunnable);
 
+        mMovieRequestTimeout.setValue(false);
         AppExecutors.getInstance().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
-                // let the user know its timed out
                 Log.d(TAG,"TIME OUT Cancelling the MovieDetails Task");
+                mMovieRequestTimeout.postValue(true);
                 handler.cancel(true);
             }
         }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -150,15 +164,16 @@ public class MovieApiClient {
                         currentMovies.addAll(list);
                         mPopularMovies.postValue(currentMovies);
                     }
+                    mListener.onPopularMoviesResponse(list);
                 }
                 else{
                     String error = response.errorBody().string();
-                    Log.e(TAG, "run: " + error );
-                    mPopularMovies.postValue(null);
+                    Log.e(TAG, "RetrievePopularMoviesRunnable run error: " + error );
+                    mListener.onPopularMoviesNetworkError();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                mPopularMovies.postValue(null);
+                mListener.onPopularMoviesNetworkError();
             }
         }
 
@@ -193,22 +208,23 @@ public class MovieApiClient {
                     return;
                 }
                 if(response.code() == 200){
-                    Log.d(TAG, "Response success" );
-                    MovieResponse movieResponse = ((MovieResponse)response.body());
-                    mMovie.postValue(movieResponse);
+                    MovieDetailsResponse movieResponse = ((MovieDetailsResponse)response.body());
+                    MovieDetails movieDetails = new MovieDetails(movieResponse);
+                    mMovie.postValue(movieDetails);
+                    mListener.onMovieDetailsResponse(movieDetails);
                 }
                 else{
                     String error = response.errorBody().string();
-                    Log.e(TAG, "run: " + error );
-                    mMovie.postValue(null);
+                    Log.e(TAG, "RetrieveMovieDetailsRunnable run error: " + error );
+                    mListener.onMovieDetailsNetworkError();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                mMovie.postValue(null);
+                mListener.onMovieDetailsNetworkError();
             }
         }
 
-        private Call<MovieResponse> getMovie(String movieId){
+        private Call<MovieDetailsResponse> getMovie(String movieId){
             return ServiceModule.getMoviesApi().movieDetails(
                     Integer.valueOf(movieId),
                     MovieDbConfig.API_KEY
@@ -219,8 +235,7 @@ public class MovieApiClient {
             Log.d(TAG, "cancelRequest: canceling the Movie Details request.");
             cancelRequest = true;
         }
-    }
-
+     }
 
     private class RetrieveGenresRunnable implements Runnable{
 
@@ -238,18 +253,18 @@ public class MovieApiClient {
                     return;
                 }
                 if(response.code() == 200){
-                    Log.d(TAG, "Genre Response:");
                     mGenres = ((GenreResponse)response.body());
                     GenreMap.populateGenreMap(mGenres.getGenres());
+                    mListener.onGenresResponse(mGenres.getGenres());
                 }
                 else{
                     String error = response.errorBody().string();
-                    Log.e(TAG, "run: " + error );
-                    mMovie.postValue(null);
+                    Log.e(TAG, "RetrieveGenresRunnable run error: " + error );
+                    mListener.onGenresNetworkError();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                mMovie.postValue(null);
+                mListener.onGenresNetworkError();
             }
         }
 
@@ -276,6 +291,5 @@ public class MovieApiClient {
         if(mRetrieveGenresRunnable != null){
             mRetrieveGenresRunnable.cancelRequest();
         }
-
     }
 }

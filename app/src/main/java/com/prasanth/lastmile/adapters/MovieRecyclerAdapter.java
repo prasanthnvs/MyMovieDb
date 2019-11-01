@@ -24,7 +24,7 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int LOADING_TYPE = 2;
     private static final int EXHAUSTED_TYPE = 3;
 
-    private List<MovieItem> mMovies;
+    private List<MovieItem> mMovies = new ArrayList<>();
     private OnMovieListener mOnMovieListener;
 
     public MovieRecyclerAdapter(OnMovieListener mOnMovieListener) {
@@ -98,13 +98,24 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public void displayLoading(){
-        if(!isLoading()){
-            MovieItem movie = new MovieItem();
-            movie.setTitle("LOADING...");
-            List<MovieItem> loadingList = new ArrayList<>();
-            loadingList.add(movie);
-            mMovies = loadingList;
+    public void setPopularMovieQueryExhausted(){
+        if(mMovies.size() > 0 && mMovies.get(0).getTitle().equals("EXHAUSTED..."))
+            return;
+
+        hideLoading();
+        MovieItem mExhaustedMovieItem = new MovieItem();
+        mExhaustedMovieItem.setTitle("EXHAUSTED...");
+        mMovies.add(mExhaustedMovieItem);
+        notifyDataSetChanged();
+    }
+
+    private void hideLoading(){
+        if(isLoading()){
+            for(MovieItem movie: mMovies){
+                if(movie.getTitle().equals("LOADING...")){
+                    mMovies.remove(movie);
+                }
+            }
             notifyDataSetChanged();
         }
     }
