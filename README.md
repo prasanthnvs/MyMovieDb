@@ -1,1 +1,33 @@
 # LastMile
+Instructions to Build the App:
+1. Download the zip from GitHub and extract and open it in Android Studio.
+2. Once the studio loads the project, please rebuild the project.
+3. Run the App.
+
+Note: Enable the Wifi / Mobile Data.
+
+Features:
+- RecyclerView shows the Popular movies info (Title, Release Year, Poster, Genres, popularity) from TMDb ordered by popularity. Each page contains 20 movies and keeps loads the next 20 movies while scrolling the recycler view.
+-  MovieDetails View movie details like Title, release year, poster, popularity, overview, genres, runtime & home page details when the user selects the movie from the list view.
+- The app works offline(no data connection) too because caching the popular movies data & movie details data along with retrofit cache & glid libs cache using room database.
+
+Design Choices:
+- I have organized the project such a way that all the business logic like extracting & processing the data from rest API's are completely separated from views and also modularised the project like adapters, models, rest, repositories, view models, UI, utils so that easy to debug and add new features quickly and also scalable.
+- I have used the latest Android Architecture components ViewModels, LiveData, MutableLiveData, MediatorLiveData, Room for this project.
+- The repository module in this project plays the key role to supply the data to view models/views using live-data(observer pattern) either from Rest API's or from SQLite using room library.  
+- I have chosen the MVVM architecture for this project because of the following reasons:       1. MVVM separates the view(Activity, Fragments) from business logic from UI.
+       2. projects are very scalable if we use the MVVM. 
+       3. Easy to test/unit test because models, view models, views are decoupled each other whereas tightly couple in MVP pattern hence difficult unit test with MVP.
+       4. package structure is easier to navigate, understand the structure, maintains and adding new features even more quickly.
+       5. MVVM supports lifecycle aware components specifically ViewModel.
+       6. Google introduced the Android Architecture components view models hence google also supporting the MVVM.
+
+Third-party Libraries:
+Retrofit :  is a type-safe REST client for Android, Java and Kotlin developed by Square. The library provides a powerful framework for authenticating and interacting with APIs and sending network requests with OkHttp.
+Retrofit gson converter : for serialization to and from JSON.
+Glide :  is a fast and efficient image loading library for Android focused on smooth scrolling. Glide’s primary focus is on making scrolling any kind of a list of images as smooth and fast as possible.
+
+Android Libraries:
+lifecycle: extensions for handling lifecycles with Lifecycle-aware components.
+Jetpack: Jetpack comprises the androidx.* package libraries, unbundled from the platform APIs. It offers backward compatibility and is updated more frequently than the Android platform.
+Room: Room is a persistence library, part of the Android Architecture Components. It makes it easier to work with SQLiteDatabase objects in your app, decreasing the amount of boilerplate code and verifying SQL queries at compile time.
