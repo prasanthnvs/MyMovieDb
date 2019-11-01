@@ -17,11 +17,11 @@ Design Choices:
 - The repository module in this project plays the key role to supply the data to view models/views using live-data(observer pattern) either from Rest API's or from SQLite using room library.  
 - I have chosen the MVVM architecture for this project because of the following reasons:
       - MVVM separates the view(Activity, Fragments) from business logic from UI.
-      - projects are very scalable if we use the MVVM. 
-      - Easy to test/unit test because models, view models, views are decoupled each other whereas tightly couple in MVP pattern hence difficult unit test with MVP.
-      - package structure is easier to navigate, understand the structure, maintains and adding new features even more quickly.
-      - MVVM supports lifecycle aware components specifically ViewModel.
-      - Google introduced the Android Architecture components view models hence google also supporting the MVVM.
+      - projects are very scalable if we use the MVVM. 
+      - Easy to test/unit test because models, view models, views are decoupled each other whereas tightly couple in MVP pattern hence difficult unit test with MVP.
+      - package structure is easier to navigate, understand the structure, maintains and adding new features even more quickly.
+      - MVVM supports lifecycle aware components specifically ViewModel.
+      - Google introduced the Android Architecture components view models hence google also supporting the MVVM.
 
 Third-party Libraries:
 - Retrofit :  is a type-safe REST client for Android, Java and Kotlin developed by Square. The library provides a powerful framework for authenticating and interacting with APIs and sending network requests with OkHttp.
