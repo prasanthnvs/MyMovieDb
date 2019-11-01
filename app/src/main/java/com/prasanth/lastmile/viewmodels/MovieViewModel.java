@@ -1,25 +1,29 @@
 package com.prasanth.lastmile.viewmodels;
 
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
+import com.prasanth.lastmile.models.MovieDetails;
 import com.prasanth.lastmile.repositories.MovieRepository;
-import com.prasanth.lastmile.rest.responses.MovieResponse;
 
 
-public class MovieViewModel extends ViewModel {
+public class MovieViewModel extends AndroidViewModel {
 
     private MovieRepository mMovieRepository;
     private String mMovieId;
     private boolean mDidRetrieveMovie;
 
-    public MovieViewModel() {
-        mMovieRepository = MovieRepository.getInstance();
+    public MovieViewModel(@NonNull Application application) {
+        super(application);
+        mMovieRepository = MovieRepository.getInstance(application);
         mDidRetrieveMovie = false;
     }
 
-    public LiveData<MovieResponse> getMovie(){
+    public LiveData<MovieDetails> getMovie(){
         return mMovieRepository.getMovie();
     }
 

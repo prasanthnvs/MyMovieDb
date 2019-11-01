@@ -1,7 +1,7 @@
 package com.prasanth.lastmile.rest;
 
 import com.prasanth.lastmile.rest.responses.GenreResponse;
-import com.prasanth.lastmile.rest.responses.MovieResponse;
+import com.prasanth.lastmile.rest.responses.MovieDetailsResponse;
 import com.prasanth.lastmile.rest.responses.MoviesResponse;
 
 import retrofit2.Call;
@@ -17,7 +17,7 @@ public interface MoviesApiService {
 
     //MOVIE DETAIL
     @GET("3/movie/{id}")
-    Call<MovieResponse> movieDetails(@Path("id") int movieID, @Query("api_key") String apiKey);
+    Call<MovieDetailsResponse> movieDetails(@Path("id") int movieID, @Query("api_key") String apiKey);
 
     //MOVIE GENRE LIST
     @GET("3/genre/movie/list")

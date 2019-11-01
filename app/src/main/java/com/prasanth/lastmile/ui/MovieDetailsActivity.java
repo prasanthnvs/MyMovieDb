@@ -17,9 +17,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import com.prasanth.lastmile.R;
-import com.prasanth.lastmile.rest.responses.MovieResponse;
+import com.prasanth.lastmile.models.MovieDetails;
 import com.prasanth.lastmile.utils.GenreMap;
 import com.prasanth.lastmile.viewmodels.MovieViewModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.prasanth.lastmile.utils.MovieDbConfig.IMAGE_URL_BASE_PATH;
 
@@ -69,14 +73,11 @@ public class MovieDetailsActivity extends BaseActivity {
     }
 
     private void subscribeObservers(){
-        mMovieViewModel.getMovie().observe(this, new Observer<MovieResponse>() {
+        mMovieViewModel.getMovie().observe(this, new Observer<MovieDetails>() {
             @Override
-            public void onChanged(@Nullable MovieResponse movie) {
-                Log.d(TAG,"MovieDetails onChanged for MovieRespnse");
+            public void onChanged(@Nullable MovieDetails movie) {
                 if(movie != null){
-
                     if(String.valueOf(movie.getId()).equals(mMovieViewModel.getMovieId())){
-                        Log.d(TAG,"movie Response Id:" + movie.getId() + ", ViewModelId:" + mMovieViewModel.getMovieId());
                         setMovieProperties(movie);
                         mMovieViewModel.setRetrievedMovie(true);
                     }
@@ -96,8 +97,9 @@ public class MovieDetailsActivity extends BaseActivity {
     }
 
     private void displayErrorScreen(String errorMessage){
-        mMovieTitle.setText("Error retrieveing Movie...");
+        mMovieTitle.setText("Error retrieving Movie...");
         mMoviePopularity.setText("");
+        mMovieGenres.setText("");
         TextView textView = new TextView(this);
         if(!errorMessage.equals("")){
             textView.setText(errorMessage);
@@ -109,6 +111,7 @@ public class MovieDetailsActivity extends BaseActivity {
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         ));
+        mMovieDetailsContainer.removeAllViews();
         mMovieDetailsContainer.addView(textView);
 
         RequestOptions requestOptions = new RequestOptions()
@@ -123,8 +126,7 @@ public class MovieDetailsActivity extends BaseActivity {
         showProgressBar(false);
     }
 
-    private void setMovieProperties(MovieResponse movie){
-        Log.d(TAG, "Movie:" + movie.toString());
+    private void setMovieProperties(MovieDetails movie){
         if(movie != null){
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_launcher_background);
@@ -135,17 +137,27 @@ public class MovieDetailsActivity extends BaseActivity {
                     .into(mMovieImage);
 
             mMovieTitle.setText(movie.getTitle());
-            mMovieGenres.setText(GenreMap.getGenres(movie.getGenres()));
+            String genres = movie.getGenreIds();
+
+            if(genres.startsWith("[")) {
+                genres = genres.substring(1,genres.length()-1);
+                List<String> genresList = new ArrayList<String>(Arrays.asList(genres.split(",")));
+                genres = GenreMap.getGenresList(genresList);
+            }
+
+            mMovieGenres.setText(genres);
             mMoviePopularity.setText(String.valueOf(Math.round(movie.getPopularity())));
 
             mMovieDetailsContainer.removeAllViews();
-            mMovieOverview.setText(movie.getOverview());
+            mMovieOverview.setText("Overview : " + movie.getOverview());
             mMovieDetailsContainer.addView(mMovieOverview);
             mMovieReleaseDate.setText("ReleaseYear : " +  movie.getReleaseDate().split("-")[0]);
             mMovieDetailsContainer.addView(mMovieReleaseDate);
-            mMovieRunTime.setText( "RunTime : " + String.valueOf(movie.getRuntime() + " min"));
+            if(movie.getRuntime() != null && !movie.getRuntime().toString().isEmpty())
+                mMovieRunTime.setText( "RunTime : " + String.valueOf(movie.getRuntime() + " min"));
             mMovieDetailsContainer.addView(mMovieRunTime);
-            mMovieHomePageLink.setText("HomePage : " + movie.getHomepage());
+            if(movie.getHomepage() != null && !movie.getHomepage().isEmpty())
+                mMovieHomePageLink.setText("HomePage : " + movie.getHomepage());
             mMovieDetailsContainer.addView(mMovieHomePageLink);
         }
 

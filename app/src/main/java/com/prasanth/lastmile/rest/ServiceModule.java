@@ -21,7 +21,4 @@ public class ServiceModule {
         return moviesApi;
     }
 
-    public static Configurations configurations() {
-        return builder(Configurations.class);
-    }
 }

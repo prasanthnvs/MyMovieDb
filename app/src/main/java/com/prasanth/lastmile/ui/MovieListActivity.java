@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,7 +16,6 @@ import com.prasanth.lastmile.R;
 import com.prasanth.lastmile.adapters.MovieRecyclerAdapter;
 import com.prasanth.lastmile.adapters.OnMovieListener;
 import com.prasanth.lastmile.models.MovieItem;
-import com.prasanth.lastmile.utils.Testing;
 import com.prasanth.lastmile.utils.VerticalItemDecorator;
 import com.prasanth.lastmile.viewmodels.MovieListViewModel;
 
@@ -31,21 +29,17 @@ public class MovieListActivity extends BaseActivity implements OnMovieListener {
     private MovieListViewModel mMovieListViewModel;
     private RecyclerView mRecyclerView;
     private MovieRecyclerAdapter mAdapter;
-    private SearchView mSearchView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
         mRecyclerView = findViewById(R.id.movie_list);
-        mSearchView = findViewById(R.id.search_view);
 
         mMovieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
 
         initRecyclerView();
         subscribeObservers();
-        initSearchView();
         if(!mMovieListViewModel.isViewingMovies()){
 
             mMovieListViewModel.setIsViewingMovies(false);
@@ -61,10 +55,18 @@ public class MovieListActivity extends BaseActivity implements OnMovieListener {
             public void onChanged(@Nullable List<MovieItem> movies) {
                 if(movies != null){
                     if(mMovieListViewModel.isViewingMovies()){
-                        Testing.printMovies(movies, "Movies test");
-                        mMovieListViewModel.setIsPerformingQuery(false);
                         mAdapter.setMovies(movies);
                     }
+                }
+            }
+        });
+
+        mMovieListViewModel.isPopularMoviesQueryExhausted().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                Log.d(TAG, "onChanged: the popular movies query is exhausted." + aBoolean);
+                if(aBoolean) {
+                    mAdapter.setPopularMovieQueryExhausted();
                 }
             }
         });
@@ -89,29 +91,9 @@ public class MovieListActivity extends BaseActivity implements OnMovieListener {
         });
     }
 
-    private void initSearchView(){
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-
-                mAdapter.displayLoading();
-                mMovieListViewModel.searchMoviesApi(1);
-                mSearchView.clearFocus();
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-    }
-
     @Override
     public void onMovieClick(int position) {
         Intent intent = new Intent(this, MovieDetailsActivity.class);
-        Log.d(TAG, "movie id : " + mAdapter.getSelectedMovie(position).getId());
         intent.putExtra("movieid", mAdapter.getSelectedMovie(position).getId());
         startActivity(intent);
     }
