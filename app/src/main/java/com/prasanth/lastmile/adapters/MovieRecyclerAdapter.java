@@ -16,6 +16,8 @@ import com.prasanth.lastmile.utils.GenreMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.prasanth.lastmile.utils.Constants.EXHAUSTED;
+import static com.prasanth.lastmile.utils.Constants.LOADING;
 import static com.prasanth.lastmile.utils.MovieDbConfig.IMAGE_URL_BASE_PATH;
 
 public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -82,15 +84,15 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if(mMovies.get(position).getTitle().equals("LOADING...")){
+        if(mMovies.get(position).getTitle().equals(LOADING)){
             return LOADING_TYPE;
         }
-        else if(mMovies.get(position).getTitle().equals("EXHAUSTED...")){
+        else if(mMovies.get(position).getTitle().equals(EXHAUSTED)){
             return EXHAUSTED_TYPE;
         }
         else if(position == mMovies.size() - 1
                 && position != 0
-                && !mMovies.get(position).getTitle().equals("EXHAUSTED...")){
+                && !mMovies.get(position).getTitle().equals(EXHAUSTED)){
             return LOADING_TYPE;
         }
         else{
@@ -99,12 +101,12 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void setPopularMovieQueryExhausted(){
-        if(mMovies.size() > 0 && mMovies.get(0).getTitle().equals("EXHAUSTED..."))
+        if(mMovies.size() > 0 && mMovies.get(0).getTitle().equals(EXHAUSTED))
             return;
 
         hideLoading();
         MovieItem mExhaustedMovieItem = new MovieItem();
-        mExhaustedMovieItem.setTitle("EXHAUSTED...");
+        mExhaustedMovieItem.setTitle(EXHAUSTED);
         mMovies.add(mExhaustedMovieItem);
         notifyDataSetChanged();
     }
@@ -112,7 +114,7 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void hideLoading(){
         if(isLoading()){
             for(MovieItem movie: mMovies){
-                if(movie.getTitle().equals("LOADING...")){
+                if(movie.getTitle().equals(LOADING)){
                     mMovies.remove(movie);
                 }
             }
@@ -123,7 +125,7 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean isLoading(){
         if(mMovies != null){
             if(mMovies.size() > 0){
-                if(mMovies.get(mMovies.size() - 1).getTitle().equals("LOADING...")){
+                if(mMovies.get(mMovies.size() - 1).getTitle().equals(LOADING)){
                     return true;
                 }
             }

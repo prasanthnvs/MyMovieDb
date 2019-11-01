@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.prasanth.lastmile.utils.Constants.ERROR;
+import static com.prasanth.lastmile.utils.Constants.ERROR_RETRIEVING_MOVIE;
+import static com.prasanth.lastmile.utils.Constants.MOVIE_ID;
 import static com.prasanth.lastmile.utils.MovieDbConfig.IMAGE_URL_BASE_PATH;
 
 public class MovieDetailsActivity extends BaseActivity {
@@ -65,8 +68,8 @@ public class MovieDetailsActivity extends BaseActivity {
     }
 
     private void getIncomingIntent(){
-        if(getIntent().hasExtra("movieid")){
-            Integer movie_id = getIntent().getIntExtra("movieid", 1);
+        if(getIntent().hasExtra(MOVIE_ID)){
+            Integer movie_id = getIntent().getIntExtra(MOVIE_ID, 1);
             Log.d(TAG, "getIncomingIntent Movie ID: " + movie_id);
             mMovieViewModel.searchMovieById(String.valueOf(movie_id));
         }
@@ -97,7 +100,7 @@ public class MovieDetailsActivity extends BaseActivity {
     }
 
     private void displayErrorScreen(String errorMessage){
-        mMovieTitle.setText("Error retrieving Movie...");
+        mMovieTitle.setText(ERROR_RETRIEVING_MOVIE);
         mMoviePopularity.setText("");
         mMovieGenres.setText("");
         TextView textView = new TextView(this);
@@ -105,7 +108,7 @@ public class MovieDetailsActivity extends BaseActivity {
             textView.setText(errorMessage);
         }
         else{
-            textView.setText("Error");
+            textView.setText(ERROR);
         }
         textView.setTextSize(15);
         textView.setLayoutParams(new LinearLayout.LayoutParams(
