@@ -21,6 +21,8 @@ import com.prasanth.lastmile.utils.GenreMap;
 
 import java.util.List;
 
+import static com.prasanth.lastmile.utils.Constants.PAGE_SIZE;
+
 public class MovieRepository implements MovieApiClient.NetworkListener {
     private static final String TAG = "MovieRepository";
 
@@ -142,7 +144,7 @@ public class MovieRepository implements MovieApiClient.NetworkListener {
                     mMovies.postValue(popularMovies);
                 }
 
-                if(popularMovies.size() % 20 != 0){
+                if(popularMovies.size() % PAGE_SIZE != 0){
                     mIsPopularMoviesQueryExhausted.postValue(true);
                 }else {
                     mIsPopularMoviesQueryExhausted.postValue(true);

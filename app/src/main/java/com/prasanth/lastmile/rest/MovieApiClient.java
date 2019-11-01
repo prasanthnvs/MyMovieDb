@@ -26,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.prasanth.lastmile.utils.Constants.NETWORK_TIMEOUT;
+import static com.prasanth.lastmile.utils.Constants.RESPONSE_OK;
 
 public class MovieApiClient {
 
@@ -154,7 +155,7 @@ public class MovieApiClient {
                 if(cancelRequest){
                     return;
                 }
-                if(response.code() == 200){
+                if(response.code() == RESPONSE_OK){
                     List<MovieItem> list = new ArrayList<>(((MoviesResponse)response.body()).getMovies());
                     if(pageNumber == 1){
                         mPopularMovies.postValue(list);
@@ -207,7 +208,7 @@ public class MovieApiClient {
                 if(cancelRequest){
                     return;
                 }
-                if(response.code() == 200){
+                if(response.code() == RESPONSE_OK){
                     MovieDetailsResponse movieResponse = ((MovieDetailsResponse)response.body());
                     MovieDetails movieDetails = new MovieDetails(movieResponse);
                     mMovie.postValue(movieDetails);
@@ -252,7 +253,7 @@ public class MovieApiClient {
                 if(cancelRequest){
                     return;
                 }
-                if(response.code() == 200){
+                if(response.code() == RESPONSE_OK){
                     mGenres = ((GenreResponse)response.body());
                     GenreMap.populateGenreMap(mGenres.getGenres());
                     mListener.onGenresResponse(mGenres.getGenres());

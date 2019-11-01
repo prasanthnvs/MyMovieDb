@@ -21,6 +21,8 @@ import com.prasanth.lastmile.viewmodels.MovieListViewModel;
 
 import java.util.List;
 
+import static com.prasanth.lastmile.utils.Constants.MOVIE_ID;
+
 
 public class MovieListActivity extends BaseActivity implements OnMovieListener {
 
@@ -94,7 +96,7 @@ public class MovieListActivity extends BaseActivity implements OnMovieListener {
     @Override
     public void onMovieClick(int position) {
         Intent intent = new Intent(this, MovieDetailsActivity.class);
-        intent.putExtra("movieid", mAdapter.getSelectedMovie(position).getId());
+        intent.putExtra(MOVIE_ID, mAdapter.getSelectedMovie(position).getId());
         startActivity(intent);
     }
 
