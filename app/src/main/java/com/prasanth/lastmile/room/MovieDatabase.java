@@ -39,9 +39,3 @@ public abstract class MovieDatabase extends RoomDatabase {
     public abstract GenresDao getGenresDao();
 
 }
-
-
-
-
-
-

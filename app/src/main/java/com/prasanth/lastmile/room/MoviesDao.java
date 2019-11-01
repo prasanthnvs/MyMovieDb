@@ -33,12 +33,3 @@ public interface MoviesDao {
     MovieItem getMovie(String movie_id);
 
 }
-
-
-
-
-
-
-
-
-

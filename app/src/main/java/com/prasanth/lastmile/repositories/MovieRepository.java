@@ -128,7 +128,6 @@ public class MovieRepository implements MovieApiClient.NetworkListener {
                 mMovieDetails.postValue(mMovieDetailsDao.getMovie(mMovieId));
             }
         }).start();
-
     }
 
     @Override
