@@ -11,6 +11,16 @@ Note: Enable the Wifi / Mobile Data.
 - MovieDetails View movie details like Title, release year, poster, popularity, overview, genres, runtime & home page details when the user selects the movie from the list view.
 - The app works offline(no data connection) too because caching the popular movies data & movie details data along with retrofit cache & glid libs cache using room database.
 
+# The app has following packages:
+  - adapters: It has adapters and viewholders. Adapters loads the corresponding view holders on to recyclerView based on context of the application.
+  - models: All th Pojo's which also act as entities for database.
+  - repositories: MovieRepository which supplies the data to view models from REST API calls and also handles the NEwtwork connection erros by implementing the NetworkListener interface.
+  - rest: Handles all the rest API calls and corresponding responses.
+  - room: It has all the DAO's and movie databse and converters.
+  - ui:View classes along with corresponding view models.
+  - utils: It contains all utility classes.
+  - viewmodels: It has ViewModel classes which aware of Application contexts and contains Movierepository singleton instance.
+ 
 # Design Choices:
 - I have organized the project such a way that all the business logic like extracting & processing the data from rest API's are completely separated from views and also modularised the project like adapters, models, rest, repositories, view models, UI, utils so that easy to debug and add new features quickly and also scalable.
 - I have used the latest Android Architecture components ViewModels, LiveData, MutableLiveData, MediatorLiveData, Room for this project.
