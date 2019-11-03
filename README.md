@@ -1,3 +1,7 @@
+![Screenshot_1572585115](https://user-images.githubusercontent.com/56863042/68087148-b8ca4280-fe07-11e9-9682-c4a5437b1a0f.png)
+![Screenshot_1572586137](https://user-images.githubusercontent.com/56863042/68087119-84568680-fe07-11e9-8ac2-089b958cf242.png)
+![Screenshot_1572586130](https://user-images.githubusercontent.com/56863042/68087083-2a55c100-fe07-11e9-8220-c77519216234.png)
+
 # LastMile
 # Instructions to Build the App:
 1. Download the zip from GitHub and extract and open it in Android Studio.
