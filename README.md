@@ -1,4 +1,4 @@
-# LastMile
+# MyMovieDb
 ## ScreenShots
 <img src="images/popular_movies.png" width=200 > | <img src="images/movie_details.png" width=200> | <img src="images/movie_web_view.png" width=200> 
 
